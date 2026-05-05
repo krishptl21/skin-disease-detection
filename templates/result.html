@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analysis Results — DermaScan AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <main class="container">
+    <header class="hero">
+      <h1>Analysis <span class="accent">Results</span></h1>
+      <p class="subtitle">Detailed diagnostic breakdown and clinical risk profile.</p>
+    </header>
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <img src="{{ uploaded_image }}" class="preview-img" style="display: block; margin: auto;">
+    </div>
+
+    <!-- Warnings -->
+    {% if warning_mel %}<div class="result-card alert-danger"><h3>⚠ High-Risk Alert</h3><p>{{ warning_mel }}</p></div>{% endif %}
+    {% if warning_low_conf %}<div class="result-card alert-warning"><h3>⚠ Low Confidence</h3><p>{{ warning_low_conf }}</p></div>{% endif %}
+
+    <!-- Broad Category -->
+    <div class="result-card alert-success">
+      <h2>Detected Category: <strong>{{ broad_category }}</strong></h2>
+      <div class="stat-row">
+        <div class="stat"><span class="stat-label">Skin Cancer</span><span class="stat-val danger">{{ (cancer_prob * 100)|round(1) }}%</span></div>
+        <div class="stat"><span class="stat-label">Benign Lesion</span><span class="stat-val success">{{ (benign_prob * 100)|round(1) }}%</span></div>
+        <div class="stat"><span class="stat-label">Other Disease</span><span class="stat-val warning">{{ (other_prob * 100)|round(1) }}%</span></div>
+      </div>
+    </div>
+
+    <!-- Clinical Risk -->
+    <div class="result-card alert-info">
+      <h2>Clinical Risk Interpretation</h2>
+      <p><strong>Risk Level:</strong> {{ clinical_risk_level }} (Score: {{ clinical_risk_score }})</p>
+      <p><strong>Recommendation:</strong> {{ clinical_recommendation }}</p>
+      {% if clinical_reasons %}
+        <div class="info-section">
+          <p><strong>Flagged Indicators:</strong></p>
+          <ul>{% for reason in clinical_reasons %}<li>{{ reason }}</li>{% endfor %}</ul>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Primary Finding -->
+    <div class="result-card">
+      <h2 style="margin-top:0;">Primary Finding: <span class="accent">{{ top_name }}</span></h2>
+      <p>Model Confidence: <strong>{{ (top_confidence * 100)|round(2) }}%</strong></p>
+      <div class="info-section">
+        <p><strong> Description:</strong> {{ description }}</p>
+        <p><strong> Symptoms:</strong> {{ symptoms }}</p>
+        <p><strong> Treatment:</strong> {{ treatment }}</p>
+        <p><strong> Action:</strong> {{ aid }}</p>
+        <p><strong> Source:</strong> {{ source_note }}</p>
+      </div>
+    </div>
+
+    <!-- Top 3 -->
+    <div class="result-card">
+      <h3>Top 3 Predictions</h3>
+      <div class="top3-list">
+        {% for item in top3 %}
+          <div class="top3-card">
+            <div><div class="top3-name">{{ item.name }}</div><div class="top3-meta">{{ item.short }} · {{ item.category }}</div></div>
+            <div class="top3-prob">{{ (item.prob*100)|round(1) }}%</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Data Support -->
+    <div class="result-card alert-info">
+      <h3>Training Data Support</h3>
+      <div class="stat-row">
+        <div class="stat"><span class="stat-label">Total Images</span><span class="stat-val">{{ dataset_count }}</span></div>
+        <div class="stat"><span class="stat-label">HAM10000</span><span class="stat-val">{{ ham_count }}</span></div>
+        <div class="stat"><span class="stat-label">SCIN</span><span class="stat-val">{{ scin_count }}</span></div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="/" style="text-decoration: none;"><button type="button" class="cta" style="background: #64748b;">Analyze Another Image</button></a>
+    </div>
+
+    <footer class="footer">
+      <p>Disclaimer: Not a medical diagnosis. Consult a professional for clinical evaluation.</p>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DermaScan AI — Input</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <main class="container">
+    <header class="hero">
+      <div class="badge"><span class="dot"></span> AI Vision · Clinical Fusion</div>
+      <h1>DermaScan <span class="accent">AI</span></h1>
+      <p class="subtitle">Multimodal skin disease screening — image analysis combined with clinical context.</p>
+    </header>
+
+    {% if error %}
+      <div class="result-card alert-danger"><p><strong>Error:</strong> {{ error }}</p></div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="upload-form">
+      <label for="fileInput" class="dropzone">
+        <div class="dropzone-icon">⬆</div>
+        <div class="dropzone-text">
+          <strong>Upload a skin image</strong>
+          <span>PNG, JPG, or WEBP · Click or drag to select</span>
+        </div>
+        <input type="file" name="file" id="fileInput" accept="image/*" required onchange="previewImage(event)">
+      </label>
+
+      <section class="field-group">
+        <h3 class="group-title">Clinical Details</h3>
+        <div class="grid">
+          <div class="field"><label>Age</label><input type="number" name="age" placeholder="e.g. 32" min="0" required></div>
+          <div class="field"><label>Gender</label>
+            <select name="gender" required>
+              <option value="">Select gender</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option>
+            </select>
+          </div>
+          <div class="field"><label>Body Part</label>
+            <select name="body_part" required>
+              <option value="">Select area</option>
+              <option value="face">Face</option><option value="neck">Neck</option><option value="arm">Arm</option>
+              <option value="chest">Chest</option><option value="back">Back</option><option value="leg">Leg</option>
+              <option value="foot">Foot</option><option value="other">Other</option>
+            </select>
+          </div>
+          <div class="field"><label>Itching</label>
+            <select name="itching" required><option value="no">No</option><option value="yes">Yes</option></select>
+          </div>
+          <div class="field"><label>Pain</label>
+            <select name="pain" required><option value="no">No</option><option value="yes">Yes</option></select>
+          </div>
+          <div class="field"><label>Duration</label>
+            <select name="duration" required>
+              <option value="<1 month">Less than 1 month</option><option value="1-6 months">1 – 6 months</option>
+              <option value="6-12 months">6 – 12 months</option><option value=">1 year">More than 1 year</option>
+            </select>
+          </div>
+          <div class="field field-wide"><label>Lesion History</label>
+            <select name="history" required>
+              <option value="stable">Stable</option><option value="growing">Growing</option><option value="changing color">Changing Color</option>
+              <option value="changing size">Changing Size</option><option value="bleeding">Bleeding</option>
+            </select>
+          </div>
+        </div>
+      </section>
+      <button type="submit" class="cta">Analyze Image + Clinical Data</button>
+    </form>
+
+    <div id="imageWrapper"><img id="output" class="preview-img" style="display:none;"></div>
+
+    <footer class="footer">
+      <p>Disclaimer: Preliminary AI analysis for screening purposes. Not a medical diagnosis.</p>
+    </footer>
+  </main>
+
+  <script>
+    function previewImage(event) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        const output = document.getElementById('output');
+        output.src = reader.result;
+        output.style.display = 'block';
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+  </script>
+</body>
+</html>
