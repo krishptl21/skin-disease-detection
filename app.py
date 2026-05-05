@@ -21,9 +21,14 @@ def focal_loss(gamma=2.0, alpha=0.25):
         return tf.reduce_sum(fl, axis=-1)
     return loss_fn
 
-MODEL_PATH = "skin_cancer_model_final.keras"
-model = load_model(MODEL_PATH)
+import gdown
+import os
 
+MODEL_PATH = "skin_cancer_model_final.keras"
+
+if not os.path.exists(MODEL_PATH):
+    url = "https://drive.google.com/uc?id=1tJ_P0sAJFkV7Z0c8FP5UCFhRvyIGRba7"
+    gdown.download(url, MODEL_PATH, quiet=False)
 UPLOAD_FOLDER = os.path.join("static", "uploads")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
