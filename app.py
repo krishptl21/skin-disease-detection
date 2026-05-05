@@ -21,7 +21,15 @@ def focal_loss(gamma=2.0, alpha=0.25):
         return tf.reduce_sum(fl, axis=-1)
     return loss_fn
 
-MODEL_PATH = "skin_combined_model.keras"
+import gdown
+
+MODEL_PATH = "skin_model.keras"
+
+if not os.path.exists(MODEL_PATH):
+    print("Downloading model...")
+    url = "https://drive.google.com/file/d/1tJ_P0sAJFkV7Z0c8FP5UCFhRvyIGRba7/view?usp=drive_link"
+    gdown.download(url, MODEL_PATH, quiet=False)
+
 model = load_model(MODEL_PATH, custom_objects={"loss_fn": focal_loss(gamma=2.0, alpha=0.25)})
 
 UPLOAD_FOLDER = os.path.join("static", "uploads")
